@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Workload Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                Invisible Workload Calculator
+            </h1>
+            <p class="text-xl md:text-2xl text-purple-700 font-semibold mb-2">
+                Unpaid work has real value.
+            </p>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Calculate the economic worth of your household labor and see how much invisible work contributes to the economy.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Input Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Daily Activities (Hours)</h2>
+                
+                <!-- Wage Rate Setting -->
+                <div class="mb-6 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Hourly Wage Rate (₹)
+                    </label>
+                    <input type="number" id="wageRate" value="250" min="1" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <p class="text-xs text-gray-500 mt-1">Adjust the hourly rate to match local wages</p>
+                </div>
+
+                <!-- Activity Inputs -->
+                <div class="space-y-4" id="activityInputs">
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Cooking & Meal Prep</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Cooking" step="0.5" min="0" value="2">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Cleaning & Housework</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Cleaning" step="0.5" min="0" value="1.5">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Laundry & Ironing</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Laundry" step="0.5" min="0" value="1">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Childcare</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Childcare" step="0.5" min="0" value="3">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-purple-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Elderly Care</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Elderly Care" step="0.5" min="0" value="0.5">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-indigo-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Shopping & Errands</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Shopping" step="0.5" min="0" value="1">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-pink-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Home Maintenance</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Maintenance" step="0.5" min="0" value="0.5">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                    
+                    <div class="activity-row flex items-center space-x-3">
+                        <div class="w-4 h-4 bg-teal-500 rounded-full"></div>
+                        <label class="flex-1 font-medium text-gray-700">Pet Care</label>
+                        <input type="number" class="activity-input w-20 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500" 
+                               data-activity="Pet Care" step="0.5" min="0" value="0.5">
+                        <span class="text-sm text-gray-500">hrs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="space-y-6">
+                <!-- Value Display -->
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Your Invisible Labor Value</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="text-center p-4 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg text-white">
+                            <p class="text-sm font-medium">Daily Value</p>
+                            <p class="text-2xl font-bold" id="dailyValue">₹2,250</p>
+                            <p class="text-sm opacity-90" id="dailyValueUSD">($27.00)</p>
+                        </div>
+                        
+                        <div class="text-center p-6 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-lg text-white">
+                            <p class="text-lg font-medium">Monthly Value</p>
+                            <p class="text-4xl font-bold" id="monthlyValue">₹67,500</p>
+                            <p class="text-lg opacity-90" id="monthlyValueUSD">($810.00)</p>
+                        </div>
+                        
+                        <div class="text-center p-4 bg-gradient-to-r from-purple-700 to-pink-600 rounded-lg text-white">
+                            <p class="text-sm font-medium">Annual Value</p>
+                            <p class="text-2xl font-bold" id="annualValue">₹8,10,000</p>
+                            <p class="text-sm opacity-90" id="annualValueUSD">($9,720.00)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-gray-700">Total Daily Hours:</span>
+                            <span class="font-bold text-lg" id="totalHours">9.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Activity Breakdown</h3>
+                    <div class="relative h-64">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Message -->
+        <div class="mt-12 text-center">
+            <div class="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+                <blockquote class="text-xl md:text-2xl text-gray-700 font-medium italic mb-4">
+                    "If unpaid household work was counted in GDP, it would add billions to the economy."
+                </blockquote>
+                <p class="text-gray-600 leading-relaxed">
+                    According to OECD estimates, unpaid household work accounts for 10-40% of GDP when valued at market prices. 
+                    Your invisible labor has real economic value and deserves recognition.
+                </p>
+                <div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+                    <span>💼 Care Work</span>
+                    <span>🏠 Domestic Labor</span>
+                    <span>👨‍👩‍👧‍👦 Family Support</span>
+                    <span>📊 Economic Value</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let chart;
+        const USD_RATE = 83.33; // 1 USD = 83.33 INR (approximate)
+        
+        // Colors for activities
+        const colors = [
+            '#EF4444', // red
+            '#3B82F6', // blue
+            '#10B981', // green
+            '#F59E0B', // yellow
+            '#8B5CF6', // purple
+            '#6366F1', // indigo
+            '#EC4899', // pink
+            '#14B8A6'  // teal
+        ];
+
+        // Initialize the application
+        function init() {
+            setupEventListeners();
+            updateCalculations();
+            initChart();
+        }
+
+        function setupEventListeners() {
+            // Listen to all activity inputs
+            document.querySelectorAll('.activity-input').forEach(input => {
+                input.addEventListener('input', updateCalculations);
+            });
+            
+            // Listen to wage rate changes
+            document.getElementById('wageRate').addEventListener('input', updateCalculations);
+        }
+
+        function updateCalculations() {
+            const wageRate = parseFloat(document.getElementById('wageRate').value) || 250;
+            let totalHours = 0;
+            const activities = [];
+
+            // Calculate total hours and collect activity data
+            document.querySelectorAll('.activity-input').forEach((input, index) => {
+                const hours = parseFloat(input.value) || 0;
+                const activity = input.dataset.activity;
+                
+                totalHours += hours;
+                
+                if (hours > 0) {
+                    activities.push({
+                        name: activity,
+                        hours: hours,
+                        value: hours * wageRate,
+                        color: colors[index]
+                    });
+                }
+            });
+
+            // Update displays
+            const dailyValue = totalHours * wageRate;
+            const monthlyValue = dailyValue * 30;
+            const annualValue = dailyValue * 365;
+
+            document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+            document.getElementById('dailyValue').textContent = `₹${dailyValue.toLocaleString('en-IN')}`;
+            document.getElementById('dailyValueUSD').textContent = `($${(dailyValue / USD_RATE).toFixed(2)})`;
+            
+            document.getElementById('monthlyValue').textContent = `₹${monthlyValue.toLocaleString('en-IN')}`;
+            document.getElementById('monthlyValueUSD').textContent = `($${(monthlyValue / USD_RATE).toFixed(2)})`;
+            
+            document.getElementById('annualValue').textContent = `₹${annualValue.toLocaleString('en-IN')}`;
+            document.getElementById('annualValueUSD').textContent = `($${(annualValue / USD_RATE).toFixed(2)})`;
+
+            // Update chart
+            updateChart(activities);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const activity = context.label;
+                                    const hours = context.parsed;
+                                    const percentage = ((hours / context.dataset.data.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                                    return `${activity}: ${hours}h (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '50%'
+                }
+            });
+            
+            updateChart([]);
+        }
+
+        function updateChart(activities) {
+            if (!chart) return;
+            
+            const labels = activities.map(a => a.name);
+            const data = activities.map(a => a.hours);
+            const colors_filtered = activities.map((_, index) => colors[index]);
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = data;
+            chart.data.datasets[0].backgroundColor = colors_filtered;
+            chart.update('none'); // No animation for smooth real-time updates
+        }
+
+        // Start the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
